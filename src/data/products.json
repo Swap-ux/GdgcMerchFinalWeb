@@ -1,0 +1,65 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "title": "GDGC Hoodie " ,
+      "subtitle": "Early Bird Sale Live",
+      "description": "Stay warm and stylish with our exclusive GDGC collection featuring premium fabrics and contemporary designs.",
+      "backgroundImage": "/images/background-model1.png",
+      "thumbnails": [
+    "/images/hoodie-1.png" 
+  ],
+      
+      "number": "01",
+      "active": true,
+      "price": 749,
+      "originalPrice": 999,
+      "discount": 25,
+      "category": "",
+      "sizes": [ "S", "M", "L", "XL"],
+      "colors": ["Black", "Navy", "Grey"],
+      "inStock": true,
+      "featured": true,
+      "season": ""
+    },
+    {
+      "id": 2,
+      "title": "GDGC T-shirt",
+      "subtitle": "Early Bird Sale Live",
+      "description": "Brighten up your wardrobe with our fresh GDGC Tshirt collection. Light fabrics and comforts await.",
+      "backgroundImage": "/images/background-model2.png",
+        "thumbnails": [
+    "/images/hoodie-2.png" 
+  ],
+      "number": "02",
+      "active": false,
+      "price": 279,
+      "originalPrice": 349,
+      "discount": 20,
+      "category": "",
+      "sizes": [ "S", "M", "L", "XL"],
+      "colors": ["black", "Yellow", "Green"],
+      "inStock": true,
+      "featured": true,
+      "season": ""
+    },
+    {
+      "id": 3,
+      "title": "GDGC Mousepad",
+      "subtitle": "Early Bird Sale Live",
+      "description": "Get ready for amazing mouse grip and washable mouse pad from GDGC .",
+      "backgroundImage": "/images/background-model3.png",
+      "number": "03",
+      "active": false,
+      "price": 140,
+      "originalPrice": 200,
+      "discount": 30,
+      "category": "",
+      "sizes": [ "S", "M", "L"],
+      "colors": ["White", "Blue", "Coral"],
+      "inStock": true,
+      "featured": true,
+      "season": ""
+    }
+  ]
+}
