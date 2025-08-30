@@ -18,7 +18,7 @@ import ShoppingBag from './pages/ShoppingBag';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderComplete from './pages/OrderComplete';
 import MyOrders from './pages/MyOrders';
-import ResetPassword from './pages/ResetPassword'; // Import the new page
+import ResetPassword from './pages/ResetPassword';
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
@@ -32,14 +32,14 @@ function AppContent() {
         return;
       }
       
-      // This line makes the code work both locally and when deployed
       const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
       try {
         const response = await fetch(`${API_URL}/api/products`);
         
-        const responseData = await response.json();
-        const data = responseData.products; // Correctly extracts the array
+        // --- THIS IS THE CRITICAL FIX ---
+        const responseData = await response.json();        // Gets the object { products: [...] }
+        const data = responseData.products;             // Extracts the array [...] from the object
 
         if (Array.isArray(data) && data.length > 0) {
           const productsWithActive = data.map((product, index) => ({
@@ -53,13 +53,13 @@ function AppContent() {
       } catch (error) {
         console.error('CRITICAL ERROR processing products:', error);
       } finally {
-        setIsLoading(false); // This ensures the loading state is always turned off
+        setIsLoading(false);
       }
     };
 
     fetchProductsGlobally();
     
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, []);
 
   return (
     <div className="app-container">
@@ -68,7 +68,7 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/reset-password" element={<ResetPassword />} /> {/* Added route for password reset */}
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/collection" element={<Collection />} />
           <Route path="/shopping-bag" element={<ShoppingBag />} />
