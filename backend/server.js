@@ -24,6 +24,8 @@ app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000', creden
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(express.static(path.join(__dirname, 'build')));
+
 // ------------ DATABASE CONNECTION ------------
 mongoose
   .connect(process.env.MONGO_URI)
