@@ -2,6 +2,9 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AppContext } from '../context/AppContext';
 import './MyOrders.css';
 
+// Define the API URL using environment variables for flexibility
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 function MyOrders() {
   const { token } = useContext(AppContext);
   const [orders, setOrders] = useState([]);
@@ -17,7 +20,8 @@ function MyOrders() {
       }
 
       try {
-        const response = await fetch(`${API_URL}/api/orders', {
+        // BUG FIX: Corrected the fetch URL string by removing the extra quote
+        const response = await fetch(`${API_URL}/api/orders`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -44,7 +48,6 @@ function MyOrders() {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // --- UPDATED JSX WITH IMPROVED LAYOUT FOR ALL STATES ---
   return (
     <div className="my-orders-page">
       <h1 className="my-orders-title">My Orders</h1>
