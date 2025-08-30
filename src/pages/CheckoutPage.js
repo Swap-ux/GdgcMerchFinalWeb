@@ -29,8 +29,8 @@ function CheckoutPage() {
   useEffect(() => {
     // Only fetch if there's a total to pay and the user is logged in
     if (total > 0 && token) {
-      fetch("http://localhost:5000/api/create-payment-intent", {
-        method: "POST",
+      fetch("/api/create-payment-intent", {
+    method: "POST",
         headers: {
           "Content-Type": "application/json",
           // --- UPDATED: Add the Authorization header ---
