@@ -21,8 +21,6 @@ import MyOrders from './pages/MyOrders';
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
-const responseData = await response.json();     
-const data = responseData.products.products; 
 
 function AppContent() {
   const { products, setProducts, setIsLoading } = useContext(AppContext);
@@ -35,11 +33,13 @@ function AppContent() {
       }
       
       const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+try {
+        const response = await fetch(`${API_URL}/api/products`);
+        const responseData = await response.json();
+        const data = responseData.products.products; 
 
-      try {
-        const response = await fetch(`${API_URL}/api/products`);
-        const responseData = await response.json();
-        const data = responseData.products;
+       
+
 
         if (Array.isArray(data) && data.length > 0) {
           const productsWithActive = data.map((product, index) => ({
