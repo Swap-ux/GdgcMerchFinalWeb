@@ -1,38 +1,37 @@
+// ------------ IMPORTS ------------
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
+const bcrypt = "bcrypt";
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-require("dotenv").config();
 const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const sgMail = require('@sendgrid/mail');
 
-// This setup is perfect for deployment
-const corsOptions = {
-  origin: process.env.FRONTEND_URL || "http://localhost:3000"
-};
-app.use(cors(corsOptions));
-
-// Configure SendGrid
+// ------------ CONFIGURATIONS ------------
+require("dotenv").config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+// ------------ APP INITIALIZATION ------------
 const app = express();
+
+// ------------ LOAD STATIC DATA ------------
 const products = require('./products.json');
 
-/* ------------ Middleware ------------ */
+// ------------ MIDDLEWARE ------------
+// This single CORS setup is now used for the entire app
 app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000', credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/* ------------ Database ------------ */
+// ------------ DATABASE CONNECTION ------------
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("✔️ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB error:", err));
 
-/* ------------ Models ------------ */
+// ------------ MODELS ------------
 const userSchema = new mongoose.Schema({
     name: { type: String, required: true, trim: true, minlength: 2, maxlength: 80 },
     email: { type: String, required: true, lowercase: true, unique: true, trim: true },
@@ -62,7 +61,7 @@ const orderSchema = new mongoose.Schema({
 
 const Order = mongoose.model('Order', orderSchema);
 
-/* ------------ Auth Middleware ------------ */
+// ------------ AUTH MIDDLEWARE FUNCTION ------------
 function authenticate(req, res, next) {
   const token = (req.headers.authorization || "").replace("Bearer ", "").trim();
   if (!token) return res.status(401).json({ message: "No token provided." });
@@ -74,7 +73,7 @@ function authenticate(req, res, next) {
   }
 }
 
-/* ------------ API Routes ------------ */
+// ------------ API ROUTES ------------
 
 // --- User Authentication Routes ---
 app.post('/api/register', async (req, res) => {
@@ -125,7 +124,6 @@ app.post("/api/forgot-password", async (req, res) => {
     
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
-      // Security practice: Don't reveal if an email exists or not.
       return res.json({ message: "If an account with that email exists, a password reset link has been sent." });
     }
 
@@ -154,7 +152,7 @@ app.post("/api/forgot-password", async (req, res) => {
     
     const msg = {
       to: user.email,
-      from: 'Swapnildeka14@gmail.com', // Make sure this is a verified sender in SendGrid
+      from: 'Swapnildeka14@gmail.com',
       subject: 'Password Reset Request',
       html: emailHTML,
     };
@@ -192,7 +190,7 @@ app.post("/api/reset-password", async (req, res) => {
   }
 });
 
-// --- Payment & Order Routes (Unchanged) ---
+// --- Payment & Order Routes ---
 app.post("/api/create-payment-intent", authenticate, async (req, res) => {
   try {
     const { total } = req.body;
@@ -248,10 +246,11 @@ app.get('/api/orders', authenticate, async (req, res) => {
   }
 });
 
-// --- Products Route (Unchanged) ---
+// --- Products Route ---
 app.get('/api/products', (req, res) => {
-  res.json(products);
+  res.json({ products: products }); // Ensure this sends the object format the frontend now expects
 });
 
-/* ------------ Server Init ------------ */
-capp.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000', credentials: true }));
+// ------------ SERVER LISTENER ------------
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
