@@ -18,7 +18,6 @@ import ShoppingBag from './pages/ShoppingBag';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderComplete from './pages/OrderComplete';
 import MyOrders from './pages/MyOrders';
-// REMOVED: The import for a non-existent ResetPassword file is now gone.
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
@@ -36,7 +35,6 @@ function AppContent() {
 
       try {
         const response = await fetch(`${API_URL}/api/products`);
-        
         const responseData = await response.json();
         const data = responseData.products;
 
@@ -67,7 +65,6 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          {/* REMOVED: The unnecessary route for /reset-password is now gone. */}
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/collection" element={<Collection />} />
           <Route path="/shopping-bag" element={<ShoppingBag />} />
