@@ -11,8 +11,21 @@ export default function CheckoutForm({ totalAmount, shippingInfo, cart }) {
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // FIX: Helper function to check if all required shipping fields are filled
+  const isShippingInfoValid = () => {
+    if (!shippingInfo) return false;
+    // Check that all required fields have a value
+    return shippingInfo.name && shippingInfo.email && shippingInfo.address && shippingInfo.city && shippingInfo.postalCode;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // FIX: Add a validation check before processing the payment
+    if (!isShippingInfoValid()) {
+      setMessage("Please complete all shipping information fields before proceeding.");
+      return; // Stop the submission
+    }
 
     if (!stripe || !elements || !token) {
       setMessage("Cannot process payment. Please ensure you are logged in.");
@@ -21,15 +34,12 @@ export default function CheckoutForm({ totalAmount, shippingInfo, cart }) {
 
     setIsLoading(true);
 
-    // --- THIS IS THE CRITICAL STEP ---
-    // It saves the order details to sessionStorage before redirecting to Stripe.
     const orderDetails = {
       cart: cart,
       total: totalAmount,
       shippingInfo: shippingInfo,
     };
     sessionStorage.setItem('orderDetailsForCompletion', JSON.stringify(orderDetails));
-
 
     const { error } = await stripe.confirmPayment({
       elements,
@@ -47,11 +57,14 @@ export default function CheckoutForm({ totalAmount, shippingInfo, cart }) {
     setIsLoading(false);
   };
 
+  const isButtonDisabled = isLoading || !stripe || !elements || !isShippingInfoValid();
+
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
       <PaymentElement id="payment-element" />
       <button 
-        disabled={isLoading || !stripe || !elements} 
+        // FIX: The button is now disabled if shipping info is invalid
+        disabled={isButtonDisabled} 
         id="submit" 
         className="w-full bg-gray-900 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-colors mt-6"
       >
