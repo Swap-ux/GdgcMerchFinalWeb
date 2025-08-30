@@ -27,28 +27,32 @@ function AppContent() {
 
   useEffect(() => {
     const fetchProductsGlobally = async () => {
+      // Avoid re-fetching if products are already loaded
       if (products.length > 0) {
         setIsLoading(false);
         return;
       }
       
       const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-try {
-        const response = await fetch(`${API_URL}/api/products`);
-        const responseData = await response.json();
-        const data = responseData.products.products; 
-
-       
-
+      
+      try {
+        const response = await fetch(`${API_URL}/api/products`);
+        const responseData = await response.json();
+        
+        // --- FINAL FIX ---
+        // Safely access the nested products array using optional chaining
+        const data = responseData?.products?.products; 
 
         if (Array.isArray(data) && data.length > 0) {
           const productsWithActive = data.map((product, index) => ({
             ...product,
-            active: index === 0,
+            active: index === 0, // Set the first product as active by default
             sizes: product.sizes || ["XS", "S", "M", "L", "XL"],
             colors: product.colors || ["Black", "White", "Grey"]
           }));
           setProducts(productsWithActive);
+        } else {
+          console.log("API did not return a valid product array.");
         }
       } catch (error) {
         console.error('CRITICAL ERROR processing products:', error);
