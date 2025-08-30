@@ -107,9 +107,7 @@ function Hero() {
         </Swiper>
       </div>
 
-      <div className="scroll-indicator">
-        <div className="scroll-text">Scroll</div>
-        <div className="scroll-line"></div>
+  
       </div>
     </section>
   );
