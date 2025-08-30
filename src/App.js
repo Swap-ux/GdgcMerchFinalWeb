@@ -30,15 +30,13 @@ function AppContent() {
         setIsLoading(false);
         return;
       }
+      
+      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
       try {
-        const response = await fetch('http://localhost:5000/api/products');
-        
-        // --- THE FINAL FIX IS HERE ---
-        const responseData = await response.json();        // Gets the object { products: [...] }
-        const data = responseData.products;   
-
-        console.log("Data received from API:", data);
+        const response = await fetch(`${API_URL}/api/products`);
+        const responseData = await response.json();
+        const data = responseData.products;
 
         if (Array.isArray(data) && data.length > 0) {
           const productsWithActive = data.map((product, index) => ({
@@ -48,9 +46,6 @@ function AppContent() {
             colors: product.colors || ["Black", "White", "Grey"]
           }));
           setProducts(productsWithActive);
-          console.log("Products state was successfully set.");
-        } else {
-          console.log("API returned no data or the data was not an array.");
         }
       } catch (error) {
         console.error('CRITICAL ERROR processing products:', error);
