@@ -1,149 +1,82 @@
+/* Full page background for the login route */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-}
-
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 20px 100px;
+.login-page-background {
+  min-height: 100vh;
+  width: 100%; /* Using 100% is often safer than 100vw to prevent horizontal scrollbars */
   display: flex;
   align-items: center;
-  z-index: 99;
-  backdrop-filter: blur(20px);
+  justify-content: center;
+  padding: 20px;
+  
+  /* Corrected background properties */
+  background: url("/public/images/background3.png") no-repeat center center;
+  background-size: cover;
+  background-attachment: fixed; /* THIS IS THE FIX */
 }
-
-.icon {
-  font-size: 30px;
-  color: white;
-  text-decoration: none;
-  font-weight: 700;
-  margin-right: auto;
-}
-
-.nav a {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-  margin-left: 40px;
-}
-
-.Authorisation {
-  margin-left: 40px;
-}
-
-.Authorisation .login-button {
-  height: 40px;
-  padding: 0 35px;
-  background: transparent;
-  border: 2px solid white;
-  border-radius: 40px;
-  font-size: 16px;
-  color: #f7f4f4;
-  font-weight: 500;
-  cursor: pointer;
-  transition: .5s;
-}
-
-.Authorisation .login-button:hover {
-  background: white;
-  color: black;
-}
-
-section {
-  min-height: 100vh;
-  background: url("/public/images/background3.png") no-repeat center/cover;
-  padding: 0 100px;
-}
-
-section h1 {
-  position: absolute;
-  bottom: 40px;
-  font-size: 25px;
-  color: white;
-  font-weight: 600;
-}
-
+/* Main authentication container */
 .main-auth {
-  position: fixed;
-  inset: 0;
-  margin: auto;
+  position: relative;
   width: 420px;
-  height: 440px;
+  min-height: 440px;
   background: rgba(0, 0, 0, .3);
   border: 2px solid rgba(255, 255, 255, .3);
   backdrop-filter: blur(20px);
   color: white;
+  border-radius: 15px;
   overflow: hidden;
-  transform: scale(0);
-  transition: transform .5s ease, height .2s ease;
+  transition: height .3s ease;
 }
 
-.main-auth.show {
-  transform: scale(1);
-}
-
+/* Adjust height for register form */
 .main-auth.slide {
-  height: 520px;
+  min-height: 520px;
 }
 
-.main-auth.forgot {
-  height: 440px; /* Adjust height if needed for forgot form */
-}
-
-.main-auth .fbox,
-.main-auth .fboxregister,
-.main-auth .fboxforgot {
+/* Form box styling (applies to all form containers) */
+.fbox,
+.fboxregister,
+.fboxforgot,
+.fboxreset {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
   padding: 40px;
-  transition: transform .3s ease;
+  transition: transform .5s ease-in-out;
 }
 
-.main-auth .fbox {
-  transform: translateX(0);
-}
+/* --- Form Sliding Animations --- */
 
-.main-auth .fboxregister {
-  transform: translateX(100%);
-}
+/* Initial positions */
+.fbox { transform: translateX(0); }
+.fboxregister, .fboxforgot, .fboxreset { transform: translateX(100%); }
 
-.main-auth .fboxforgot {
-  transform: translateX(100%);
-}
+/* When registering (slide class) */
+.main-auth.slide .fbox { transform: translateX(-100%); }
+.main-auth.slide .fboxregister { transform: translateX(0); }
 
-.main-auth.slide .fbox {
-  transform: translateX(-100%);
-}
+/* When forgetting password (forgot class) */
+.main-auth.forgot .fbox, .main-auth.forgot .fboxregister { transform: translateX(-100%); }
+.main-auth.forgot .fboxforgot { transform: translateX(0); }
+.main-auth.forgot .fboxreset { transform: translateX(100%); }
 
-.main-auth.slide .fboxregister {
-  transform: translateX(0);
-}
+/* When resetting password (reset class) */
+.main-auth.reset .fbox, .main-auth.reset .fboxregister, .main-auth.reset .fboxforgot { transform: translateX(-100%); }
+.main-auth.reset .fboxreset { transform: translateX(0); }
 
-.main-auth.forgot .fbox {
-  transform: translateX(-100%);
-}
 
-.main-auth.forgot .fboxforgot {
-  transform: translateX(0);
-}
-
-.fbox h2,
-.fboxregister h2,
-.fboxforgot h2 {
+/* Form Content Styling */
+.fbox h2, .fboxregister h2, .fboxforgot h2, .fboxreset h2 {
   font-size: 35px;
   margin-bottom: 20px;
   text-align: center;
+}
+
+.form-description {
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .ibox {
@@ -165,7 +98,7 @@ section h1 {
 }
 
 .ibox input::placeholder {
-  color: white;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .ibox i {
@@ -174,7 +107,6 @@ section h1 {
   right: 20px;
   transform: translateY(-50%);
   font-size: 20px;
-  color: white;
 }
 
 .button {
@@ -188,274 +120,53 @@ section h1 {
   font-weight: 500;
   margin-top: 20px;
   cursor: pointer;
+  transition: opacity 0.3s ease;
 }
 
-.fbox p,
-.fboxregister p,
-.fboxforgot p {
+.button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.fbox p, .fboxregister p, .fboxforgot p, .fboxreset p {
   margin-top: 15px;
   font-size: 14px;
+  text-align: center;
 }
 
-.fbox p a,
-.fboxregister p a,
-.fboxforgot p a {
+.fbox p a, .fboxregister p a, .fboxforgot p a, .fboxreset p a {
   color: white;
   text-decoration: none;
   font-weight: 600;
+  cursor: pointer;
 }
 
-.fbox p a:hover,
-.fboxregister p a:hover,
-.fboxforgot p a:hover {
+.fbox p a:hover, .fboxregister p a:hover, .fboxforgot p a:hover, .fboxreset p a:hover {
   text-decoration: underline;
 }
 
-.main-auth .close-button {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 40px;
-  height: 35px;
-  background: transparent;
-  border: none;
-  border-bottom-left-radius: 20px;
-  font-size: 35px;
-  color: black;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.pbox {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.pbox .Ava {
-  width: 40px;
-  height: 40px;
-  background: #eee8e8;
-  border-radius: 50%;
-  line-height: 40px;
-  text-align: center;
-  font-size: 25px;
-  color: #000;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.pbox .dropdown {
-  position: absolute;
-  top: 85px;
-  right: 100px;
-  background: white;
-  padding: 10px;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(20px);
-  transition: all .5s ease;
-}
-
-.pbox.show .dropdown {
-  transform: translateY(0);
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.pbox .dropdown a {
-  padding: 6px 12px;
-  margin: 2px 0;
-  color: black;
-  text-decoration: none;
-  font-weight: 500;
-  border-radius: 4px;
-  transition: background .25s;
-}
-
-.pbox .dropdown a:hover {
-  background: lightgray;
-}
-
-/* Main alert box styling */
-/* --- General Alert Box --- */
+/* Alert Box Styling */
 .alert {
-  position: fixed;
-  top: 35px;
+  position: absolute;
+  top: -100px; /* Start hidden above the box */
   left: 50%;
-  width: 380px; /* Slightly wider */
-  height: 70px;
-  background: #ffffff;
-  font-family: 'Poppins', sans-serif; /* Modern, clean font */
-  border-radius: 10px; /* Softer corners */
-  padding: 0 20px;
-  z-index: 100;
-  overflow: hidden;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  transform: translate(-50%, -150%);
-  transition: transform 0.5s ease-in-out;
-}
-
-/* --- States (Show/Hide) --- */
-.alert.show {
-  transform: translate(-50%, 0); /* Slides into view */
-}
-
-/* --- Content Inside the Alert --- */
-.alert-content {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  font-weight: 500;
-  color: #555; /* Softer than pure black */
-}
-
-.alert-content i {
-  font-size: 30px;
-  margin-right: 15px; /* More space for the icon */
-}
-
-/* --- Progress Bar Animation --- */
-@keyframes progress {
-  to {
-    width: 0;
-  }
-}
-
-/* --- Color Variations --- */
-
-/* Success Alert (Green) */
-.alert.success .alert-content i {
-  color: #4CAF50; /* Softer success green */
-}
-
-.alert.success::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 5px;
-  background: #4CAF50;
-  animation: progress 6s linear forwards;
-}
-
-/* Error Alert (Red) */
-.alert.error .alert-content i {
-  color: #f44336; /* Softer error red */
-}
-
-.alert.error .alert-content span {
-  color: #333; /* Keep text readable */
-}
-
-.alert.error::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 5px;
-  background: #f44336;
-  animation: progress 6s linear forwards;
-}
-/* Add these styles to your existing style.css */
-
-/* Reset password form positioning */
-.main-auth .fboxforgot,
-.main-auth .fboxreset {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  padding: 40px;
-  transition: transform .3s ease;
-  transform: translateX(100%);
-}
-
-/* Show forgot password form */
-.main-auth.forgot .fbox {
-  transform: translateX(-100%);
-}
-
-.main-auth.forgot .fboxforgot {
-  transform: translateX(0);
-}
-
-.main-auth.forgot .fboxregister {
-  transform: translateX(100%);
-}
-
-.main-auth.forgot .fboxreset {
-  transform: translateX(100%);
-}
-
-/* Show reset password form */
-.main-auth.reset .fbox,
-.main-auth.reset .fboxregister,
-.main-auth.reset .fboxforgot {
-  transform: translateX(-100%);
-}
-
-.main-auth.reset .fboxreset {
-  transform: translateX(0);
-}
-
-/* Password strength indicator */
-.password-strength {
-  margin-top: 5px;
-  font-size: 12px;
-  transition: all 0.3s ease;
-}
-
-.password-strength.weak {
-  color: #dc3545;
-}
-
-.password-strength.medium {
-  color: #ffc107;
-}
-
-.password-strength.strong {
-  color: #28a745;
-}
-
-/* Loading state for buttons */
-.button.loading {
-  opacity: 0.7;
-  cursor: not-allowed;
-  position: relative;
-}
-
-.button.loading::after {
-  content: '';
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  margin: auto;
-  border: 2px solid transparent;
-  border-top-color: #ffffff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Email sent confirmation */
-.email-sent {
+  transform: translateX(-50%);
+  width: calc(100% - 40px);
+  padding: 15px;
+  background: #f44336; /* Default error */
+  color: white;
+  border-radius: 8px;
   text-align: center;
-  padding: 20px;
-  color: #28a745;
+  z-index: 10;
+  opacity: 0;
+  transition: top 0.5s ease, opacity 0.5s ease;
 }
 
-.email-sent i {
-  font-size: 48px;
-  margin-bottom: 16px;
+.alert.success {
+  background: #4CAF50; /* Success green */
+}
+
+.alert.show {
+  top: 20px; /* Slide into view */
+  opacity: 1;
 }

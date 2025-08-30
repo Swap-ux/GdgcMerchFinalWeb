@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 function ShoppingBag() {
   const { shoppingBag, setShoppingBag } = useContext(AppContext);
 
+  // --- All Stripe-related state and functions have been removed from this file ---
+
   const updateQuantity = (index, newQuantity) => {
     if (newQuantity <= 0) {
       removeItem(index);
@@ -28,7 +30,7 @@ function ShoppingBag() {
 
   const calculateSavings = () => {
     return shoppingBag.reduce((savings, item) => {
-      if (item.originalPrice) {
+      if (item.originalPrice && item.originalPrice > item.price) {
         return savings + ((item.originalPrice - item.price) * item.quantity);
       }
       return savings;
@@ -84,70 +86,37 @@ function ShoppingBag() {
                 <div key={`${item.id}-${item.size}-${index}`} className="bg-white rounded-lg p-6 shadow-sm">
                   <div className="flex items-start space-x-4">
                     
-                    {/* Item Image */}
                     <img
                       src={item.backgroundImage}
                       alt={item.title}
                       className="w-24 h-24 object-cover rounded-lg"
                     />
 
-                    {/* Item Details */}
                     <div className="flex-1">
                       <div className="flex items-start justify-between">
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                            {item.title}
-                          </h3>
-                          <p className="text-gray-600 text-sm mb-2">
-                            {item.subtitle}
-                          </p>
+                          <h3 className="text-lg font-semibold text-gray-900 mb-1">{item.title}</h3>
+                          <p className="text-gray-600 text-sm mb-2">{item.subtitle}</p>
                           <div className="flex items-center space-x-4 text-sm text-gray-500">
                             <span>Size: {item.size}</span>
                             {item.color && <span>Color: {item.color}</span>}
                           </div>
                         </div>
-
-                        {/* Remove Button */}
-                        <button
-                          onClick={() => removeItem(index)}
-                          className="text-gray-400 hover:text-red-500 transition-colors"
-                        >
+                        <button onClick={() => removeItem(index)} className="text-gray-400 hover:text-red-500 transition-colors">
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
                         </button>
                       </div>
-
-                      {/* Price and Quantity */}
                       <div className="flex items-center justify-between mt-4">
                         <div className="flex items-center space-x-2">
-                          <span className="text-lg font-bold text-gray-900">
-                             ₹ {item.price}
-                          </span>
-                          {item.originalPrice && (
-                            <span className="text-sm text-gray-500 line-through">
-                               ₹ {item.originalPrice}
-                            </span>
-                          )}
+                          <span className="text-lg font-bold text-gray-900">₹ {item.price}</span>
+                          {item.originalPrice && <span className="text-sm text-gray-500 line-through">₹ {item.originalPrice}</span>}
                         </div>
-
-                        {/* Quantity Controls */}
                         <div className="flex items-center space-x-3">
-                          <button
-                            onClick={() => updateQuantity(index, item.quantity - 1)}
-                            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors"
-                          >
-                            −
-                          </button>
-                          <span className="text-lg font-medium w-8 text-center">
-                            {item.quantity}
-                          </span>
-                          <button
-                            onClick={() => updateQuantity(index, item.quantity + 1)}
-                            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors"
-                          >
-                            +
-                          </button>
+                          <button onClick={() => updateQuantity(index, item.quantity - 1)} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors">−</button>
+                          <span className="text-lg font-medium w-8 text-center">{item.quantity}</span>
+                          <button onClick={() => updateQuantity(index, item.quantity + 1)} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors">+</button>
                         </div>
                       </div>
                     </div>
@@ -158,49 +127,40 @@ function ShoppingBag() {
 
             {/* Order Summary */}
             <div className="bg-white rounded-lg p-6 shadow-sm h-fit">
-              <h3 className="text-xl font-semibold text-gray-900 mb-6">
-                Order Summary
-              </h3>
-
+              <h3 className="text-xl font-semibold text-gray-900 mb-6">Order Summary</h3>
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal</span>
-                  <span className="font-medium"> ₹ {calculateTotal().toFixed(2)}</span>
+                  <span className="font-medium">₹ {calculateTotal().toFixed(2)}</span>
                 </div>
-                
                 {calculateSavings() > 0 && (
                   <div className="flex justify-between text-green-600">
                     <span>Savings</span>
                     <span>- ₹ {calculateSavings().toFixed(2)}</span>
                   </div>
                 )}
-                
                 <div className="flex justify-between">
                   <span className="text-gray-600">Shipping</span>
                   <span className="font-medium">Free</span>
                 </div>
-                
                 <div className="flex justify-between">
                   <span className="text-gray-600">Tax</span>
                   <span className="font-medium">₹{(calculateTotal() * 0.08).toFixed(2)}</span>
                 </div>
-                
                 <div className="border-t pt-4">
                   <div className="flex justify-between text-lg font-bold">
                     <span>Total</span>
-                    <span> ₹ {(calculateTotal() * 1.08).toFixed(2)}</span>
+                    <span>₹ {(calculateTotal() * 1.08).toFixed(2)}</span>
                   </div>
                 </div>
               </div>
 
-              <button className="w-full bg-gray-900 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-colors mb-4">
+              {/* --- UPDATED: Button is now a Link to the new checkout page --- */}
+              <Link to="/checkout" className="w-full block text-center bg-gray-900 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-colors mb-4">
                 Proceed to Checkout
-              </button>
+              </Link>
 
-              <Link
-                to="/"
-                className="block text-center text-gray-600 hover:text-gray-900 transition-colors"
-              >
+              <Link to="/" className="block text-center text-gray-600 hover:text-gray-900 transition-colors">
                 Continue Shopping
               </Link>
             </div>

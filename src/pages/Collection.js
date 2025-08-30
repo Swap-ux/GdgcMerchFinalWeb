@@ -113,11 +113,11 @@ function Collection() {
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center space-x-2">
                         <span className="text-2xl font-bold text-gray-900">
-                          ${item.price}
+                           ₹{item.price}
                         </span>
                         {item.originalPrice && (
                           <span className="text-lg text-gray-500 line-through">
-                            ${item.originalPrice}
+                            ₹{item.originalPrice}
                           </span>
                         )}
                       </div>
