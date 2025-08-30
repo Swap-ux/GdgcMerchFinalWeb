@@ -2,7 +2,7 @@
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
-const bcrypt = "bcrypt";
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const cors = require('cors');
@@ -20,7 +20,6 @@ const app = express();
 const products = require('./products.json');
 
 // ------------ MIDDLEWARE ------------
-// This single CORS setup is now used for the entire app
 app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000', credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -116,7 +115,7 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-// --- Password Reset Routes (Updated with SendGrid) ---
+// --- Password Reset Routes ---
 app.post("/api/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
@@ -248,7 +247,7 @@ app.get('/api/orders', authenticate, async (req, res) => {
 
 // --- Products Route ---
 app.get('/api/products', (req, res) => {
-  res.json({ products: products }); // Ensure this sends the object format the frontend now expects
+  res.json({ products: products });
 });
 
 // ------------ SERVER LISTENER ------------
