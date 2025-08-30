@@ -21,6 +21,9 @@ import MyOrders from './pages/MyOrders';
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
+const responseData = await response.json();     
+const data = responseData.products.products; 
+
 function AppContent() {
   const { products, setProducts, setIsLoading } = useContext(AppContext);
 
