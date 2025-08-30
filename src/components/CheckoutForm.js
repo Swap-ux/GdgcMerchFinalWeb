@@ -6,24 +6,29 @@ import { AppContext } from "../context/AppContext";
 export default function CheckoutForm({ totalAmount, shippingInfo, cart }) {
   const stripe = useStripe();
   const elements = useElements();
-  const { token } = useContext(AppContext);
+  // FIX: Get the showAlert function from your global context
+  const { token, showAlert } = useContext(AppContext);
 
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // FIX: Helper function to check if all required shipping fields are filled
   const isShippingInfoValid = () => {
     if (!shippingInfo) return false;
-    // Check that all required fields have a value
     return shippingInfo.name && shippingInfo.email && shippingInfo.address && shippingInfo.city && shippingInfo.postalCode;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // FIX: Add a validation check before processing the payment
     if (!isShippingInfoValid()) {
-      setMessage("Please complete all shipping information fields before proceeding.");
+      // FIX: Trigger the global alert instead of the small text message
+      // This will show the pop-up alert at the top of the page.
+      if (showAlert) {
+        showAlert("Please fill out all shipping details first.", "error");
+      } else {
+        // Fallback in case showAlert is not available
+        setMessage("Please complete all shipping information fields before proceeding.");
+      }
       return; // Stop the submission
     }
 
@@ -33,6 +38,7 @@ export default function CheckoutForm({ totalAmount, shippingInfo, cart }) {
     }
 
     setIsLoading(true);
+    setMessage(null); // Clear any previous local messages
 
     const orderDetails = {
       cart: cart,
@@ -63,7 +69,6 @@ export default function CheckoutForm({ totalAmount, shippingInfo, cart }) {
     <form id="payment-form" onSubmit={handleSubmit}>
       <PaymentElement id="payment-element" />
       <button 
-        // FIX: The button is now disabled if shipping info is invalid
         disabled={isButtonDisabled} 
         id="submit" 
         className="w-full bg-gray-900 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-colors mt-6"
@@ -72,6 +77,7 @@ export default function CheckoutForm({ totalAmount, shippingInfo, cart }) {
           {isLoading ? <div className="spinner" /> : `Pay ₹${totalAmount.toFixed(2)}`}
         </span>
       </button>
+      {/* This local message is still used for Stripe-specific errors */}
       {message && <div id="payment-message" className="text-red-500 mt-2">{message}</div>}
     </form>
   );
