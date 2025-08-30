@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectFade, Autoplay, Navigation, Pagination } from 'swiper/modules';
@@ -12,78 +12,8 @@ import 'swiper/css/pagination';
 import './Hero.css';
 
 function Hero() {
-  const { products, setProducts, addToCollection, collectionItems } = useContext(AppContext);
+  const { products, setProducts, addToCollection, collectionItems, isLoading } = useContext(AppContext);
   const swiperRef = useRef(null);
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
-    try {
-      const response = await fetch('http://localhost:3001/products');
-      const data = await response.json();
-      
-      if (data && data.length > 0) {
-        // Set first product as active
-        const productsWithActive = data.map((product, index) => ({
-          ...product,
-          active: index === 0
-        }));
-        setProducts(productsWithActive);
-      }
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      // Use local data as fallback
-      setFallbackData();
-    }
-  };
-
-  const setFallbackData = () => {
-    const fallbackProducts = [
-      {
-        id: 1,
-        title: "Winter Collection",
-        subtitle: "New Arrivals 2024",
-        description: "Stay warm and stylish with our exclusive winter collection featuring premium fabrics and contemporary designs.",
-       backgroundImage: "/images/background-model1.png",
-      "thumbnails": [
-    "/images/hoodie-1.png" 
-  ],
-        number: "01",
-        active: true,
-        price: 299,
-        originalPrice: 399,
-        discount: 25
-      },
-      {
-        id: 2,
-        title: "Spring Collection",
-        subtitle: "Fresh & Vibrant",
-        description: "Brighten up your wardrobe with our fresh spring collection. Light fabrics and vibrant colors await.",
-        backgroundImage: "/images/background-model2.png",
-        "thumbnails": [
-    "/images/hoodie-2.png" 
-        ],
-        active: false,
-        price: 199,
-        originalPrice: 249,
-        discount: 20
-      },
-      {
-        id: 3,
-        title: "Summer Collection",
-        subtitle: "Beach Ready",
-        description: "Get ready for summer adventures with our lightweight and breathable summer essentials collection.",
-        backgroundImage: "/images/background-model3.png",
-        active: false,
-        price: 159,
-        originalPrice: 199,
-        discount: 30
-      }
-    ];
-    setProducts(fallbackProducts);
-  };
 
   const handleSlideChange = (swiper) => {
     const activeIndex = swiper.activeIndex;
@@ -102,8 +32,12 @@ function Hero() {
     return collectionItems.some(item => item.id === productId);
   };
 
-  if (!products || products.length === 0) {
+  if (isLoading) {
     return <div className="hero loading">Loading products...</div>;
+  }
+
+  if (!products || products.length === 0) {
+    return <div className="hero error">No products could be found.</div>;
   }
 
   const activeProduct = products.find(p => p.active) || products[0];
@@ -118,6 +52,7 @@ function Hero() {
       <div className="hero-content">
         <div className="hero-text">
           <span className="hero-number">{activeProduct.number}</span>
+          {/* --- THIS IS THE CORRECTED LINE --- */}
           <h1 className="hero-title">{activeProduct.title}</h1>
           <h2 className="hero-subtitle">{activeProduct.subtitle}</h2>
           <p className="hero-description">{activeProduct.description}</p>
@@ -146,7 +81,6 @@ function Hero() {
           </div>
         </div>
 
-        {/* Swiper for background switching */}
         <Swiper
           ref={swiperRef}
           modules={[EffectFade, Autoplay, Pagination]}

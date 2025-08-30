@@ -1,7 +1,6 @@
 import React, { useEffect, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AppContextProvider, AppContext } from './context/AppContext';
-
 
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
@@ -17,47 +16,54 @@ import ProductDetail from './pages/ProductDetails';
 import Collection from './pages/Collection';
 import ShoppingBag from './pages/ShoppingBag';
 import CheckoutPage from './pages/CheckoutPage';
-import OrderComplete from './pages/OrderComplete'; 
+import OrderComplete from './pages/OrderComplete';
 import MyOrders from './pages/MyOrders';
+
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
-
-
-
 function AppContent() {
-  const { products, setProducts } = useContext(AppContext);
+  const { products, setProducts, setIsLoading } = useContext(AppContext);
 
   useEffect(() => {
-    fetchProductsGlobally();
-  }, []);
-
-  const fetchProductsGlobally = async () => {
-    if (products.length > 0) return; 
-
-    try {
-      const response = await fetch('http://localhost:3001/products');
-      const data = await response.json();
-
-      if (data && data.length > 0) {
-        const productsWithActive = data.map((product, index) => ({
-          ...product,
-          active: index === 0,
-          sizes: product.sizes || ["XS", "S", "M", "L", "XL"],
-          colors: product.colors || ["Black", "White", "Grey"]
-        }));
-        setProducts(productsWithActive);
+    const fetchProductsGlobally = async () => {
+      if (products.length > 0) {
+        setIsLoading(false);
+        return;
       }
-    } catch (error) {
-      console.error('Error fetching products globally, using fallback:', error);
-      const fallbackProducts = [
-        // ... your fallback product data
-      ];
-      setProducts(fallbackProducts);
-    }
-  };
+
+      try {
+        const response = await fetch('http://localhost:5000/api/products');
+        
+        // --- THE FINAL FIX IS HERE ---
+        const responseData = await response.json(); // Gets the object { products: [...] }
+        const data = responseData.products;      // Extracts the array [...] from the object
+
+        console.log("Data received from API:", data);
+
+        if (Array.isArray(data) && data.length > 0) {
+          const productsWithActive = data.map((product, index) => ({
+            ...product,
+            active: index === 0,
+            sizes: product.sizes || ["XS", "S", "M", "L", "XL"],
+            colors: product.colors || ["Black", "White", "Grey"]
+          }));
+          setProducts(productsWithActive);
+          console.log("Products state was successfully set.");
+        } else {
+          console.log("API returned no data or the data was not an array.");
+        }
+      } catch (error) {
+        console.error('CRITICAL ERROR processing products:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProductsGlobally();
+    
+  }, []); 
 
   return (
-    // --- This structure ensures the sticky footer works ---
     <div className="app-container">
       <Header />
       <main className="app-main-content">

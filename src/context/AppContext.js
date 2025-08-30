@@ -28,6 +28,7 @@ export function AppContextProvider({ children }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [userName, setUserName] = useState(localStorage.getItem('userName'));
+    const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const key = userName ? `shoppingBag_${userName}` : 'shoppingBag';
@@ -103,6 +104,8 @@ export function AppContextProvider({ children }) {
     setCollectionItems,
     shoppingBag,
     setShoppingBag,
+    isLoading,       
+    setIsLoading,
     isScrolled,
     token,
     userName,

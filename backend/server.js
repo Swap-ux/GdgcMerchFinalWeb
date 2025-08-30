@@ -3,16 +3,26 @@ const path = require("path");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 require("dotenv").config();
 const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const sgMail = require('@sendgrid/mail');
+
+// This setup is perfect for deployment
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || "http://localhost:3000"
+};
+app.use(cors(corsOptions));
+
+// Configure SendGrid
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const app = express();
+const products = require('./products.json');
 
 /* ------------ Middleware ------------ */
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000', credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -51,12 +61,6 @@ const orderSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const Order = mongoose.model('Order', orderSchema);
-
-/* ------------ Mailer ------------ */
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-});
 
 /* ------------ Auth Middleware ------------ */
 function authenticate(req, res, next) {
@@ -113,35 +117,55 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-// --- Password Reset Routes ---
+// --- Password Reset Routes (Updated with SendGrid) ---
 app.post("/api/forgot-password", async (req, res) => {
   try {
-    const { email } = req.body || {};
+    const { email } = req.body;
     if (!email) return res.status(400).json({ error: "Email is required." });
+    
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
+      // Security practice: Don't reveal if an email exists or not.
       return res.json({ message: "If an account with that email exists, a password reset link has been sent." });
     }
+
     const resetToken = crypto.randomBytes(32).toString("hex");
     user.resetToken = resetToken;
-    user.resetTokenExp = Date.now() + 3600000; // 1 hour
+    user.resetTokenExp = Date.now() + 3600000; // 1 hour expiration
     await user.save();
+
     const clientURL = process.env.CLIENT_URL || "http://localhost:3000";
     const resetURL = `${clientURL}/login?token=${resetToken}`;
+
     const emailHTML = `
-      <p>You requested a password reset. Click the button below to set a new password:</p>
-      <a href="${resetURL}" style="background:#007bff; color:#fff; padding:12px 30px; text-decoration:none; border-radius:5px;">Reset Password</a>
-      <p>This link will expire in 1 hour.</p>`;
-    await transporter.sendMail({
+      <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+        <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #dddddd; padding: 40px;">
+          <h2 style="text-align: center; color: #333333; font-weight: 500;">Password Reset Request</h2>
+          <p style="font-size: 16px; color: #555555;">Hello ${user.name},</p>
+          <p style="font-size: 16px; color: #555555;">You requested a password reset for your account. Click the button below to reset your password:</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${resetURL}" style="background-color: #007bff; color: white; padding: 14px 28px; text-decoration: none; border-radius: 5px; font-size: 16px; display: inline-block;">Reset Password</a>
+          </div>
+          <p style="font-size: 16px; color: #555555;">If you didn't request this, please ignore this email. This link will expire in 1 hour.</p>
+          <p style="font-size: 16px; color: #555555;">Best regards,<br>Swap.co Team</p>
+        </div>
+      </body>
+    `;
+    
+    const msg = {
       to: user.email,
-      from: `"Your App" <${process.env.EMAIL_USER}>`,
-      subject: "Password Reset Request",
+      from: 'Swapnildeka14@gmail.com', // Make sure this is a verified sender in SendGrid
+      subject: 'Password Reset Request',
       html: emailHTML,
-    });
-    return res.json({ message: "Password reset email sent successfully." });
+    };
+
+    await sgMail.send(msg);
+
+    console.log(`Reset link sent via SendGrid: ${resetURL}`);
+    res.json({ message: "Password reset email sent successfully." });
   } catch (err) {
     console.error("Forgot password error:", err);
-    return res.status(500).json({ error: "Failed to send reset email." });
+    res.status(500).json({ error: "Failed to send reset email." });
   }
 });
 
@@ -149,15 +173,18 @@ app.post("/api/reset-password", async (req, res) => {
   try {
     const { token, newPassword } = req.body || {};
     if (!token || !newPassword) return res.status(400).json({ error: "Token and new password required." });
+    
     const user = await User.findOne({
       resetToken: token,
       resetTokenExp: { $gt: Date.now() },
     });
     if (!user) return res.status(400).json({ error: "Invalid or expired token." });
+    
     user.password = await bcrypt.hash(newPassword, 10);
     user.resetToken = undefined;
     user.resetTokenExp = undefined;
     await user.save();
+    
     return res.json({ message: "Password reset successful." });
   } catch (err) {
     console.error("Reset password error:", err);
@@ -165,7 +192,7 @@ app.post("/api/reset-password", async (req, res) => {
   }
 });
 
-// --- Payment & Order Routes ---
+// --- Payment & Order Routes (Unchanged) ---
 app.post("/api/create-payment-intent", authenticate, async (req, res) => {
   try {
     const { total } = req.body;
@@ -221,6 +248,10 @@ app.get('/api/orders', authenticate, async (req, res) => {
   }
 });
 
+// --- Products Route (Unchanged) ---
+app.get('/api/products', (req, res) => {
+  res.json(products);
+});
+
 /* ------------ Server Init ------------ */
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
+capp.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000', credentials: true }));
