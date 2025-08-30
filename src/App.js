@@ -31,12 +31,16 @@ function AppContent() {
         return;
       }
 
+      // --- THIS IS THE FIX FOR DEPLOYMENT ---
+      // Define the API URL based on the environment
+      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
       try {
-        const response = await fetch('http://localhost:5000/api/products');
+        // Use the dynamic API_URL variable for the fetch call
+        const response = await fetch(`${API_URL}/api/products`);
         
-        // --- THE FINAL FIX IS HERE ---
-        const responseData = await response.json(); // Gets the object { products: [...] }
-        const data = responseData.products;      // Extracts the array [...] from the object
+        const responseData = await response.json();
+        const data = responseData.products;
 
         console.log("Data received from API:", data);
 
