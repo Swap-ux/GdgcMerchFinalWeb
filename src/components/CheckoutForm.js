@@ -2,11 +2,9 @@ import React, { useState, useContext } from "react";
 import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { AppContext } from "../context/AppContext";
 
-// This component accepts the full cart and shipping info as props
 export default function CheckoutForm({ totalAmount, shippingInfo, cart }) {
   const stripe = useStripe();
   const elements = useElements();
-  // FIX: Get the showAlert function from your global context
   const { token, showAlert } = useContext(AppContext);
 
   const [message, setMessage] = useState(null);
@@ -20,14 +18,10 @@ export default function CheckoutForm({ totalAmount, shippingInfo, cart }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // This validation now runs when the user clicks the button
     if (!isShippingInfoValid()) {
-      // FIX: Trigger the global alert instead of the small text message
-      // This will show the pop-up alert at the top of the page.
       if (showAlert) {
         showAlert("Please fill out all shipping details first.", "error");
-      } else {
-        // Fallback in case showAlert is not available
-        setMessage("Please complete all shipping information fields before proceeding.");
       }
       return; // Stop the submission
     }
@@ -38,7 +32,7 @@ export default function CheckoutForm({ totalAmount, shippingInfo, cart }) {
     }
 
     setIsLoading(true);
-    setMessage(null); // Clear any previous local messages
+    setMessage(null);
 
     const orderDetails = {
       cart: cart,
@@ -63,21 +57,18 @@ export default function CheckoutForm({ totalAmount, shippingInfo, cart }) {
     setIsLoading(false);
   };
 
-  const isButtonDisabled = isLoading || !stripe || !elements || !isShippingInfoValid();
-
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
       <PaymentElement id="payment-element" />
       <button 
-        disabled={isButtonDisabled} 
         id="submit" 
-        className="w-full bg-gray-900 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-colors mt-6"
+        // FIX: The className is now conditional. The 'disabled' attribute is removed.
+        className={`w-full bg-gray-900 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-colors mt-6 ${!isShippingInfoValid() || isLoading ? 'button-disabled-visual' : ''}`}
       >
         <span id="button-text">
           {isLoading ? <div className="spinner" /> : `Pay ₹${totalAmount.toFixed(2)}`}
         </span>
       </button>
-      {/* This local message is still used for Stripe-specific errors */}
       {message && <div id="payment-message" className="text-red-500 mt-2">{message}</div>}
     </form>
   );
