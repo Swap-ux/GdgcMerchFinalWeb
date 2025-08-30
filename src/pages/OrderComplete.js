@@ -3,6 +3,9 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useStripe } from '@stripe/react-stripe-js';
 import { AppContext } from '../context/AppContext';
 
+// FIX: Define the API URL using an environment variable for consistency
+const API_URL = process.env.REACT_APP_API_URL || "";
+
 function OrderComplete() {
   const stripe = useStripe();
   const [searchParams] = useSearchParams();
@@ -30,8 +33,8 @@ function OrderComplete() {
             if (savedOrderDetailsJSON) {
               const orderDetails = JSON.parse(savedOrderDetailsJSON);
 
-              // --- FIX: Use the full backend URL here ---
-              const response = await fetch('http://localhost:5000/api/create-order', {
+              // FIX: Use the API_URL variable for the fetch request
+              const response = await fetch(`${API_URL}/api/create-order`, {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
