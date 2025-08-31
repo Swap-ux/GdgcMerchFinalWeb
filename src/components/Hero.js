@@ -52,7 +52,6 @@ function Hero() {
       <div className="hero-content">
         <div className="hero-text">
           <span className="hero-number">{activeProduct.number}</span>
-          {/* --- THIS IS THE CORRECTED LINE --- */}
           <h1 className="hero-title">{activeProduct.title}</h1>
           <h2 className="hero-subtitle">{activeProduct.subtitle}</h2>
           <p className="hero-description">{activeProduct.description}</p>
@@ -83,9 +82,10 @@ function Hero() {
 
         <Swiper
           ref={swiperRef}
-          modules={[EffectFade, Autoplay, Pagination]}
-          effect="fade"
-          fadeEffect={{ crossFade: true }}
+          modules={[EffectFade, Autoplay, Pagination, Navigation]}
+          // --- FIX: REMOVED THE TWO LINES BELOW TO ENABLE SWIPING ---
+          // effect="fade"
+          // fadeEffect={{ crossFade: true }}
           autoplay={{ 
             delay: 4000, 
             disableOnInteraction: false,
@@ -96,6 +96,7 @@ function Hero() {
             bulletClass: 'swiper-pagination-bullet hero-pagination-bullet',
             bulletActiveClass: 'swiper-pagination-bullet-active hero-pagination-bullet-active'
           }}
+          navigation={true}
           onSlideChange={handleSlideChange}
           className="hero-swiper"
         >
@@ -107,8 +108,10 @@ function Hero() {
         </Swiper>
       </div>
 
-  
-
+      <div className="scroll-indicator">
+        <div className="scroll-text">Scroll</div>
+        <div className="scroll-line"></div>
+      </div>
     </section>
   );
 }
