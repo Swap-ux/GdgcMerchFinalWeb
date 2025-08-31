@@ -83,58 +83,21 @@ function ProductDetail() {
 
   if (loading || !products || products.length === 0) {
     return (
-      <div style={{
-        padding: '120px 20px 60px',
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
-        <div style={{
-          width: '50px',
-          height: '50px',
-          border: '5px solid #f3f3f3',
-          borderTop: '5px solid #ff4757',
-          borderRadius: '50%',
-          animation: 'spin 1s linear infinite',
-          marginBottom: '1rem'
-        }} />
-        <p>Loading product details...</p>
-        <style>{`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}</style>
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-20 md:py-32">
+        <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-gray-200 border-t-red-500 rounded-full animate-spin mb-4 md:mb-6"></div>
+        <p className="text-gray-600 text-sm md:text-base">Loading product details...</p>
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div style={{
-        padding: '120px 20px 60px',
-        minHeight: '100vh',
-        textAlign: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
-        <h2>Product Not Found</h2>
-        <p>The product with ID {id} doesn't exist.</p>
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-20 md:py-32 text-center">
+        <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-2">Product Not Found</h2>
+        <p className="text-gray-600 mb-6 text-sm md:text-base">The product with ID {id} doesn't exist.</p>
         <Link
           to="/"
-          style={{
-            display: 'inline-block',
-            padding: '12px 24px',
-            background: '#ff4757',
-            color: 'white',
-            textDecoration: 'none',
-            borderRadius: '5px',
-            marginTop: '20px'
-          }}
+          className="inline-block px-5 py-2.5 md:px-6 md:py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm md:text-base"
         >
           Back to Home
         </Link>
@@ -143,234 +106,151 @@ function ProductDetail() {
   }
 
   return (
-    <div style={{ padding: '120px 20px 60px', minHeight: '100vh', background: '#f8f9fa' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+    <div className="min-h-screen bg-gray-50 pt-16 md:pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
         {/* Breadcrumb */}
-        <nav style={{ marginBottom: '2rem', fontSize: '0.9rem' }}>
-          <Link to="/" style={{ color: '#6c757d', textDecoration: 'none' }}>Home</Link>
-          <span style={{ margin: '0 0.5rem', color: '#6c757d' }}>/</span>
-          <span>{product.title}</span>
+        <nav className="mb-4 md:mb-8 text-sm text-gray-500">
+          <Link to="/" className="hover:text-gray-700">Home</Link>
+          <span className="mx-2">/</span>
+          <span className="text-gray-800">{product.title}</span>
         </nav>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '4rem',
-          background: 'white',
-          borderRadius: '10px',
-          padding: '2rem',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
-        }}>
-          {/* Product Images */}
-          <div>
-            {/* Main image */}
-            <div style={{
-              width: '100%',
-              height: '500px',
-              borderRadius: '10px',
-              overflow: 'hidden',
-              marginBottom: '1rem'
-            }}>
-              <img
-                src={selectedImage || product.backgroundImage}
-                alt={product.title}
-                onClick={() => openLightboxAt(gallery.findIndex(g => g === (selectedImage || product.backgroundImage)))}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: gallery.length ? 'zoom-in' : 'default' }}
-              />
+        <div className="bg-white rounded-lg shadow-md overflow-hidden p-4 md:p-6 lg:p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+            {/* Product Images */}
+            <div>
+              {/* Main image */}
+              <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-lg overflow-hidden mb-4 cursor-zoom-in"
+                onClick={() => openLightboxAt(gallery.findIndex(g => g === (selectedImage || product.backgroundImage)))}>
+                <img
+                  src={selectedImage || product.backgroundImage}
+                  alt={product.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Thumbnails */}
+              <div className="flex flex-wrap gap-2 md:gap-3">
+                {gallery.map((img, idx) => (
+                  <button
+                    key={img}
+                    onClick={() => setSelectedImage(img)}
+                    onDoubleClick={() => openLightboxAt(idx)}
+                    className={`p-0.5 rounded overflow-hidden w-16 h-16 md:w-20 md:h-20 focus:outline-none ${(selectedImage || product.backgroundImage) === img ? 'border-2 border-red-500' : 'border border-gray-200'}`}
+                    aria-label={`Select image ${idx + 1}`}
+                    title="Click to select, double-click to view"
+                  >
+                    <img
+                      src={img}
+                      alt={`${product.title} ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Thumbnails */}
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-              {gallery.map((img, idx) => (
-                <button
-                  key={img}
-                  onClick={() => setSelectedImage(img)}
-                  onDoubleClick={() => openLightboxAt(idx)}
-                  style={{
-                    padding: 0,
-                    border: (selectedImage || product.backgroundImage) === img ? '2px solid #ff4757' : '2px solid transparent',
-                    borderRadius: '6px',
-                    overflow: 'hidden',
-                    width: 80,
-                    height: 80,
-                    cursor: 'pointer',
-                    background: 'transparent'
-                  }}
-                  aria-label={`Select image ${idx + 1}`}
-                  title="Click to select, double-click to view"
-                >
-                  <img
-                    src={img}
-                    alt={`${product.title} ${idx + 1}`}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                </button>
-              ))}
-              {/* If no thumbnails, you can optionally show nothing here */}
-            </div>
-          </div>
+            {/* Product Info */}
+            <div className="py-2 md:py-4">
+              <div className="text-red-500 text-xs md:text-sm font-semibold uppercase mb-1 md:mb-2">
+                {product.category} Collection
+              </div>
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+                {product.title}
+              </h1>
+              <p className="text-gray-600 text-sm md:text-base mb-4 md:mb-6">
+                {product.subtitle}
+              </p>
 
-          {/* Product Info */}
-          <div>
-            <div style={{ color: '#ff4757', fontSize: '0.9rem', fontWeight: '600', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-              {product.category} Collection
-            </div>
-            <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', margin: '0 0 0.5rem 0', color: '#2c3e50' }}>
-              {product.title}
-            </h1>
-            <p style={{ fontSize: '1.2rem', color: '#6c757d', margin: '0 0 1.5rem 0' }}>
-              {product.subtitle}
-            </p>
+              <div className="flex flex-wrap items-center gap-3 mb-4 md:mb-6">
+                <span className="text-2xl md:text-3xl font-bold text-red-500">
+                  ₹ {product.price}
+                </span>
+                {product.originalPrice && (
+                  <>
+                    <span className="text-lg text-gray-500 line-through">
+                      ₹ {product.originalPrice}
+                    </span>
+                    <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                      {product.discount}% OFF
+                    </span>
+                  </>
+                )}
+              </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', margin: '1.5rem 0' }}>
-              <span style={{ fontSize: '2rem', fontWeight: 'bold', color: '#ff4757' }}>
-                 ₹ {product.price}
-              </span>
-              {product.originalPrice && (
-                <>
-                  <span style={{ fontSize: '1.2rem', color: '#6c757d', textDecoration: 'line-through' }}>
-                     ₹ {product.originalPrice}
-                  </span>
-                  <span style={{
-                    background: '#ff4757',
-                    color: 'white',
-                    padding: '0.3rem 0.8rem',
-                    borderRadius: '20px',
-                    fontSize: '0.8rem',
-                    fontWeight: 'bold'
-                  }}>
-                    {product.discount}% OFF
-                  </span>
-                </>
+              <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-6 md:mb-8">
+                {product.description}
+              </p>
+
+              {/* Size Selection */}
+              {product.sizes && product.sizes.length > 0 && (
+                <div className="mb-4 md:mb-6">
+                  <h4 className="text-gray-900 font-medium mb-2 text-sm md:text-base">Size</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {product.sizes.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        className={`px-3 py-2 md:px-4 md:py-2.5 text-sm font-medium rounded border transition-colors ${selectedSize === size 
+                          ? 'bg-red-500 text-white border-red-500' 
+                          : 'bg-white text-gray-800 border-gray-300 hover:border-red-300'}`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
-            </div>
 
-            <p style={{ color: '#6c757d', lineHeight: '1.6', marginBottom: '2rem' }}>
-              {product.description}
-            </p>
-
-            {/* Size Selection */}
-            {product.sizes && product.sizes.length > 0 && (
-              <div style={{ marginBottom: '1.5rem' }}>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: '#2c3e50' }}>Size</h4>
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                  {product.sizes.map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      style={{
-                        padding: '0.8rem 1.2rem',
-                        border: `2px solid ${selectedSize === size ? '#ff4757' : '#dee2e6'}`,
-                        background: selectedSize === size ? '#ff4757' : 'white',
-                        color: selectedSize === size ? 'white' : '#333',
-                        borderRadius: '5px',
-                        cursor: 'pointer',
-                        fontWeight: '600',
-                        minWidth: '50px',
-                        textAlign: 'center',
-                        transition: 'all 0.3s ease'
-                      }}
-                    >
-                      {size}
-                    </button>
-                  ))}
+              {/* Quantity */}
+              <div className="mb-6 md:mb-8">
+                <h4 className="text-gray-900 font-medium mb-2 text-sm md:text-base">Quantity</h4>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setQuantity(prev => prev > 1 ? prev - 1 : 1)}
+                    className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center border border-gray-300 rounded-md text-lg font-bold hover:bg-gray-50 transition-colors"
+                  >
+                    -
+                  </button>
+                  <span className="text-lg font-medium w-8 text-center">
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() => setQuantity(prev => prev + 1)}
+                    className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center border border-gray-300 rounded-md text-lg font-bold hover:bg-gray-50 transition-colors"
+                  >
+                    +
+                  </button>
                 </div>
               </div>
-            )}
 
-            {/* Quantity */}
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h4 style={{ margin: '0 0 0.5rem 0', color: '#2c3e50' }}>Quantity</h4>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 mb-6 md:mb-8">
                 <button
-                  onClick={() => setQuantity(prev => prev > 1 ? prev - 1 : 1)}
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    border: '2px solid #dee2e6',
-                    background: 'white',
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                    fontSize: '1.2rem',
-                    fontWeight: 'bold',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
+                  onClick={handleAddToBag}
+                  disabled={!selectedSize}
+                  className={`flex-1 py-3 px-6 rounded-md font-semibold text-white transition-colors ${!selectedSize 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-red-500 hover:bg-red-600'}`}
                 >
-                  -
+                  Add to Bag - ₹ {product.price * quantity}
                 </button>
-                <span style={{ fontSize: '1.2rem', fontWeight: 'bold', minWidth: '30px', textAlign: 'center' }}>
-                  {quantity}
-                </span>
+
                 <button
-                  onClick={() => setQuantity(prev => prev + 1)}
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    border: '2px solid #dee2e6',
-                    background: 'white',
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                    fontSize: '1.2rem',
-                    fontWeight: 'bold',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
+                  onClick={handleAddToCollection}
+                  className={`p-3 rounded-md border transition-colors ${isCollected 
+                    ? 'bg-red-500 text-white border-red-500' 
+                    : 'bg-white text-red-500 border-red-500 hover:bg-red-50'}`}
+                  aria-label="Toggle favorite"
                 >
-                  +
+                  {isCollected ? '❤️' : '🤍'}
                 </button>
               </div>
-            </div>
 
-            {/* Action Buttons */}
-            <div style={{ display: 'flex', gap: '1rem', margin: '2rem 0' }}>
-              <button
-                onClick={handleAddToBag}
-                disabled={!selectedSize}
-                style={{
-                  flex: '1',
-                  padding: '1rem 2rem',
-                  background: selectedSize ? '#ff4757' : '#6c757d',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '5px',
-                  fontWeight: '600',
-                  cursor: selectedSize ? 'pointer' : 'not-allowed',
-                  fontSize: '1rem'
-                }}
-              >
-                Add to Bag -  ₹ {product.price * quantity}
-              </button>
-
-              <button
-                onClick={handleAddToCollection}
-                style={{
-                  padding: '1rem 1.5rem',
-                  background: isCollected ? '#ff4757' : 'white',
-                  color: isCollected ? 'white' : '#ff4757',
-                  border: '2px solid #ff4757',
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-                  fontSize: '1.2rem'
-                }}
-                aria-label="Toggle favorite"
-              >
-                {isCollected ? '❤️' : '🤍'}
-              </button>
-            </div>
-
-            {/* Features: keep empty or add your list */}
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.8rem',
-              padding: '1.5rem',
-              background: '#f8f9fa',
-              borderRadius: '8px'
-            }}>
-              {/* Add any feature rows here if needed */}
+              {/* Features */}
+              <div className="bg-gray-50 rounded-lg p-4 md:p-6">
+                {/* Add any feature rows here if needed */}
+              </div>
             </div>
           </div>
         </div>
@@ -382,42 +262,28 @@ function ProductDetail() {
           role="dialog"
           aria-modal="true"
           onClick={() => setLightboxOpen(false)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.85)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 2000
-          }}
+          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
         >
           <button
             onClick={(e) => { e.stopPropagation(); prevImage(); }}
-            style={{
-              position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)',
-              background: 'rgba(255,255,255,0.15)', color: '#fff',
-              border: 'none', borderRadius: 6, padding: '10px 14px', cursor: 'pointer'
-            }}
+            className="absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 text-white p-2 md:p-3 rounded-md hover:bg-opacity-30 transition-colors"
             aria-label="Previous image"
           >
             ‹
           </button>
 
-          <img
-            src={gallery[lightboxIndex]}
-            alt={`Gallery image ${lightboxIndex + 1}`}
-            onClick={(e) => e.stopPropagation()}
-            style={{ maxWidth: '92vw', maxHeight: '88vh', objectFit: 'contain', borderRadius: 10 }}
-          />
+          <div className="max-w-full max-h-full flex items-center justify-center">
+            <img
+              src={gallery[lightboxIndex]}
+              alt={`Gallery image ${lightboxIndex + 1}`}
+              onClick={(e) => e.stopPropagation()}
+              className="max-w-full max-h-[80vh] md:max-h-[85vh] object-contain rounded"
+            />
+          </div>
 
           <button
             onClick={(e) => { e.stopPropagation(); nextImage(); }}
-            style={{
-              position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)',
-              background: 'rgba(255,255,255,0.15)', color: '#fff',
-              border: 'none', borderRadius: 6, padding: '10px 14px', cursor: 'pointer'
-            }}
+            className="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 text-white p-2 md:p-3 rounded-md hover:bg-opacity-30 transition-colors"
             aria-label="Next image"
           >
             ›
@@ -425,11 +291,7 @@ function ProductDetail() {
 
           <button
             onClick={(e) => { e.stopPropagation(); setLightboxOpen(false); }}
-            style={{
-              position: 'absolute', top: 20, right: 20,
-              background: 'rgba(255,255,255,0.2)', color: '#fff',
-              border: 'none', borderRadius: 6, padding: '8px 12px', cursor: 'pointer'
-            }}
+            className="absolute top-4 right-4 bg-white bg-opacity-20 text-white p-2 rounded-md hover:bg-opacity-30 transition-colors"
             aria-label="Close viewer"
           >
             ✕
