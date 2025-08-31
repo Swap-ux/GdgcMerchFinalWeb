@@ -2,6 +2,7 @@ Note: If the app is showing Products laoding wait for 30-45 seconds. Render Free
 
 
 GDGC MERCH Website
+Note: This website is clearly made keeping in mind that GDGC only creates 2-3 products everywhere. This website Highlights these 3 products with a cleaner and easy to Understand UI.
 Standout Features for a Unique User Experience:
 
 Interactive Hero Section with Swiper: The homepage greets users with a dynamic and engaging hero section that uses the Swiper library to create an animated slideshow of featured products. This provides a modern and visually appealing introduction to the store's offerings.
