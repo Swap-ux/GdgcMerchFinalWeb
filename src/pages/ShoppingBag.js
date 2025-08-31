@@ -36,13 +36,13 @@ function ShoppingBag() {
   };
 
   return (
-    <div className="min-h-screen py-8 md:py-12 lg:py-20 bg-gray-50">
+    <div className="min-h-screen pt-20 pb-8 md:py-12 lg:py-20 bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Header */}
+        {/* Header with added top padding for mobile */}
         <div className="mb-6 md:mb-8">
           <h1 
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 md:mb-4"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 md:mb-4 mt-4 md:mt-0"
             style={{ fontFamily: 'Great Vibes, cursive' }}
           >
             Shopping Bag
