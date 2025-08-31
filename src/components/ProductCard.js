@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 
 function ProductCard({ product }) {
-  const { addToCollection, collectionItems, addToShoppingBag } =
-    useContext(AppContext);
+  // REMOVED: addToShoppingBag from context
+  const { addToCollection, collectionItems } = useContext(AppContext);
 
   // Default product for demo if none provided
   const defaultProduct = {
@@ -34,11 +34,7 @@ function ProductCard({ product }) {
     addToCollection(item);
   };
 
-  const handleAddToBag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addToShoppingBag(item);
-  };
+  // REMOVED: The handleAddToBag function is now gone.
 
   // Generate star ratings
   const renderStars = () => {
@@ -138,15 +134,7 @@ function ProductCard({ product }) {
           </button>
         </div>
 
-        {/* Add to Cart Button (appears on hover) */}
-        <div className="absolute bottom-4 left-0 right-0 px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <button
-            onClick={handleAddToBag}
-            className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
-          >
-            Add to Bag
-          </button>
-        </div>
+        {/* REMOVED: The "Add to Bag" button that appeared on hover is now gone. */}
       </div>
 
       {/* Product Info */}
