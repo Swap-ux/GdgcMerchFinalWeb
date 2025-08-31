@@ -1,75 +1,20 @@
-<<<<<<< HEAD
-# GdgcMerchFinalWeb
-Creating  a website for GDGC to sell Merch
-=======
-# Getting Started with Create React App
+GDGC MERCH Website
+Standout Features for a Unique User Experience:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Interactive Hero Section with Swiper: The homepage greets users with a dynamic and engaging hero section that uses the Swiper library to create an animated slideshow of featured products. This provides a modern and visually appealing introduction to the store's offerings.
 
-## Available Scripts
+User Authentication: . When you register, you simply enter your name, email, and password—everything is encrypted and stored securely in MongoDB. Once logged in, your avatar displays the first letter of your username, and clicking it reveals a clean dropdown with “My Order” and “Logout” options. The website includes a complete user authentication system with registration, login, and password reset functionality using JWT (JSON Web Tokens) for security.
 
-In the project directory, you can run:
+Product Wishlist/Collection: Users can add products to a personal "collection," which acts as a wishlist, allowing them to save items for later.
 
-### `npm start`
+Image Lightbox: The product details page includes a lightbox feature, allowing users to view larger, more detailed images of the merchandise.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Order Summary and Savings Calculation: The shopping bag provides a clear order summary, including subtotal, tax, and total. It also calculates and displays the total savings from discounts, which can incentivize purchases.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Order Management: Users have a dedicated "My Orders" page to view their order history, and the backend stores detailed order information, including products, shipping address, and payment status.
 
-### `npm test`
+Product Management: The backend serves product information from a JSON file, which can be easily updated to manage the merchandise catalog.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Shopping Cart: A fully functional shopping bag allows users to add, remove, and update the quantity of items.
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
->>>>>>> 83e5cd0 (Initial commit)
+Secure Checkout and Payments: The website integrates with Stripe for secure payment processing, creating a seamless and trustworthy checkout experience.
