@@ -1,3 +1,6 @@
+Note: If the app is showing Products laoding wait for 30-45 seconds. Render Free trial is waking up from sleep mode.
+
+
 GDGC MERCH Website
 Standout Features for a Unique User Experience:
 
