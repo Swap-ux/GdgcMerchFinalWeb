@@ -3,16 +3,15 @@ import { AppContext } from '../context/AppContext';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import CheckoutForm from '../components/CheckoutForm';
-import './CheckoutPage.css';
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
-// FIX: Define the API URL for reliable requests
 const API_URL = process.env.REACT_APP_API_URL || "";
 
 function CheckoutPage() {
   const { shoppingBag, token } = useContext(AppContext);
   const [clientSecret, setClientSecret] = useState("");
-  const [error, setError] = useState(null); // To handle potential errors
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [shippingInfo, setShippingInfo] = useState({
     name: '',
@@ -27,44 +26,40 @@ function CheckoutPage() {
   const tax = subtotal * 0.08;
   const total = subtotal + tax;
 
-  // Fetch the clientSecret from your backend
   useEffect(() => {
-    // This async function will handle the API call
     const createPaymentIntent = async () => {
       if (total > 0 && token) {
         try {
-          setError(null); // Clear previous errors
+          setError(null);
+          setIsLoading(true);
           const res = await fetch(`${API_URL}/api/create-payment-intent`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
               "Authorization": `Bearer ${token}`
             },
-            // The backend only needs the total for this step
-            body: JSON.stringify({
-              total: total
-            }),
+            body: JSON.stringify({ total: total }),
           });
 
           if (!res.ok) {
-            // If the server responds with an error, capture it
             const errorData = await res.json();
             throw new Error(errorData.error || 'Failed to initialize payment.');
           }
 
           const data = await res.json();
           setClientSecret(data.clientSecret);
-
         } catch (err) {
-          // Set the error state to display a message to the user
           console.error("Payment Intent Error:", err);
           setError(err.message);
+        } finally {
+          setIsLoading(false);
         }
+      } else {
+        setIsLoading(false);
       }
     };
     
     createPaymentIntent();
-  // FIX: This effect should only run when the total or token changes, not the shipping info
   }, [total, token]);
 
   const handleShippingChange = (e) => {
@@ -82,74 +77,131 @@ function CheckoutPage() {
   };
 
   return (
-    <div className="checkout-page">
-      {/* Left Column: Shipping Details */}
-      <div className="checkout-form">
-        <h2 className="checkout-section-title">Shipping Information</h2>
-        <form>
-          <div className="form-group">
-            <label htmlFor="name">Full Name</label>
-            <input type="text" id="name" name="name" value={shippingInfo.name} onChange={handleShippingChange} required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="email">Email Address</label>
-            <input type="email" id="email" name="email" value={shippingInfo.email} onChange={handleShippingChange} required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="address">Street Address</label>
-            <input type="text" id="address" name="address" value={shippingInfo.address} onChange={handleShippingChange} required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="city">City</label>
-            <input type="text" id="city" name="city" value={shippingInfo.city} onChange={handleShippingChange} required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="postalCode">Postal Code</label>
-            <input type="text" id="postalCode" name="postalCode" value={shippingInfo.postalCode} onChange={handleShippingChange} required />
-          </div>
-        </form>
-      </div>
-
-      {/* Right Column: Order Summary & Payment */}
-      <div className="order-summary">
-        <h2 className="checkout-section-title">Order Summary</h2>
-        <div className="summary-details">
-          <div className="summary-item">
-            <span>Subtotal</span>
-            <span>₹{subtotal.toFixed(2)}</span>
-          </div>
-          <div className="summary-item">
-            <span>Tax (8%)</span>
-            <span>₹{tax.toFixed(2)}</span>
-          </div>
-          <div className="summary-item">
-            <span>Shipping</span>
-            <span>Free</span>
-          </div>
-          <div className="summary-item total">
-            <span>Total</span>
-            <span>₹{total.toFixed(2)}</span>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gray-50 pt-20 pb-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
         
-        <div className="payment-container">
-          <h3 className="checkout-section-title">Payment Details</h3>
-          {/* Show an error message if the API call failed */}
-          {error && <div className="payment-error-message">{error}</div>}
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left Column: Shipping Details */}
+          <div className="w-full lg:w-1/2 bg-white rounded-lg shadow-sm p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6 pb-4 border-b border-gray-200">Shipping Information</h2>
+            <form className="space-y-4">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <input 
+                  type="text" 
+                  id="name" 
+                  name="name" 
+                  value={shippingInfo.name} 
+                  onChange={handleShippingChange} 
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                  required 
+                />
+              </div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  value={shippingInfo.email} 
+                  onChange={handleShippingChange} 
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                  required 
+                />
+              </div>
+              <div>
+                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
+                <input 
+                  type="text" 
+                  id="address" 
+                  name="address" 
+                  value={shippingInfo.address} 
+                  onChange={handleShippingChange} 
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                  required 
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">City</label>
+                  <input 
+                    type="text" 
+                    id="city" 
+                    name="city" 
+                    value={shippingInfo.city} 
+                    onChange={handleShippingChange} 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                    required 
+                  />
+                </div>
+                <div>
+                  <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-1">Postal Code</label>
+                  <input 
+                    type="text" 
+                    id="postalCode" 
+                    name="postalCode" 
+                    value={shippingInfo.postalCode} 
+                    onChange={handleShippingChange} 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                    required 
+                  />
+                </div>
+              </div>
+            </form>
+          </div>
 
-          {/* Only show the payment form if the clientSecret has been successfully fetched */}
-          {clientSecret && !error ? (
-            <Elements options={options} stripe={stripePromise}>
-              <CheckoutForm
-                totalAmount={total}
-                shippingInfo={shippingInfo}
-                cart={shoppingBag}
-              />
-            </Elements>
-          ) : (
-            // Only show the loading text if there isn't an error
-            !error && <p>Loading payment options...</p>
-          )}
+          {/* Right Column: Order Summary & Payment */}
+          <div className="w-full lg:w-1/2">
+            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-6 pb-4 border-b border-gray-200">Order Summary</h2>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Subtotal</span>
+                  <span className="font-medium">₹{subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Tax (8%)</span>
+                  <span className="font-medium">₹{tax.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Shipping</span>
+                  <span className="font-medium">Free</span>
+                </div>
+                <div className="flex justify-between pt-3 border-t border-gray-200">
+                  <span className="text-lg font-semibold">Total</span>
+                  <span className="text-lg font-bold">₹{total.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h3 className="text-xl font-semibold text-gray-900 mb-6 pb-4 border-b border-gray-200">Payment Details</h3>
+              
+              {error && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-md">
+                  {error}
+                </div>
+              )}
+
+              {isLoading ? (
+                <div className="flex items-center justify-center py-4">
+                  <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mr-2"></div>
+                  <p>Loading payment options...</p>
+                </div>
+              ) : clientSecret && !error ? (
+                <Elements options={options} stripe={stripePromise}>
+                  <CheckoutForm
+                    totalAmount={total}
+                    shippingInfo={shippingInfo}
+                    cart={shoppingBag}
+                  />
+                </Elements>
+              ) : (
+                <p className="text-gray-500 text-center py-4">Unable to load payment options</p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
